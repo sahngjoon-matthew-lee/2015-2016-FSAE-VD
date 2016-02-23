@@ -13,6 +13,16 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
 
+ET = CR25.ET;
+P = CR25.P;
+SA = CR25.SA;
+IA = CR25.IA;
+FX = CR25.FX;
+FY = CR25.FY;
+FZ = CR25.FZ;
+MX = CR25.MX;
+MZ = CR25.MZ;
+
 % Defined start and end of the useful data
 CR25.start = 8450; % start of useful 7in rim data (8450)
 CR25.end = 120200; % end of useful 7in rim data6  (117200)
