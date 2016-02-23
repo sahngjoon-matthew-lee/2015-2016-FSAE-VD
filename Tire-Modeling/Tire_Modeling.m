@@ -13,19 +13,19 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
 
-ET = CR25.ET;
-P = CR25.P;
-SA = CR25.SA;
-IA = CR25.IA;
-FX = CR25.FX;
-FY = CR25.FY;
-FZ = CR25.FZ;
-MX = CR25.MX;
-MZ = CR25.MZ;
+ET = CR25.ET; % [s] elapsed time
+P = CR25.P;   % [kpa] pressue
+SA = CR25.SA; % [deg] slip angle
+IA = CR25.IA; % [deg] camber angle
+FX = CR25.FX; % [N] longitudinal force
+FY = CR25.FY; % [N] lateral force
+FZ = CR25.FZ; % [N] normal force
+MX = CR25.MX; % [N*m] overturning moment
+MZ = CR25.MZ; % [N*m] aligning torque
 
 % Defined start and end of the useful data
-CR25.start = 8450; % start of useful 7in rim data (8450)
-CR25.end = 120200; % end of useful 7in rim data6  (117200)
+start = 8450; % start of useful 7in rim data (8450)
+stop = 120200; % end of useful 7in rim data  (117200)
 
 % Break data into segments
 CR25.shiftFZ = circshift(CR25.FZ, 1); % shift normal force array
