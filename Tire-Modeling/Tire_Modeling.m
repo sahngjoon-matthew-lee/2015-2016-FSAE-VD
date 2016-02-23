@@ -28,25 +28,27 @@ start = 8450; % start of useful 7in rim data (8450)
 stop = 120200; % end of useful 7in rim data  (117200)
 
 % Break data into segments
-CR25.shiftFZ = circshift(CR25.FZ, 1); % shift normal force array
-CR25.shiftFZ(1) = CR25.FZ(1);
-CR25.dFZ = CR25.shiftFZ - CR25.FZ; % find derivative in normal force
-CR25.jumps = abs(CR25.dFZ) > 125; % jump positions in binary
-CR25.dFZ = CR25.jumps.*CR25.dFZ; % jump position values
-CR25.pos = find(CR25.jumps > 0); % positions where jumps occur
-temp2 = CR25.pos >= CR25.start; % remove positions that come before useful data
-CR25.r7.trimPos = CR25.pos(temp2); % useful positions where jumps occur
-temp3 = CR25.r7.trimPos <= CR25.end; % remove positions that come after useful data
-CR25.r7.pos = CR25.r7.trimPos(temp3); % useful positions where jumps occur
-CR25.r7.jumps = CR25.jumps*15; % increase scale of binary jump positions
-pos2 = CR25.r7.pos;
+shiftFZ = circshift(FZ, 1); % shift normal force array
+shiftFZ(1) = FZ(1);
+dFZ = shiftFZ - FZ; % find derivative of normal force
+
+jumps = abs(dFZ) > 125; % jump positions in binary
+dFZ = jumps.*dFZ; % jump position values
+pos = find(jumps > 0); % positions where jumps occur
+
+temp2 = pos >= start; % remove positions that come before useful data
+trimPos = pos(temp2); % useful positions where jumps occur
+temp3 = trimPos <= stop; % remove positions that come after useful data
+pos = trimPos(temp3); % useful positions where jumps occur
+jumps = jumps*15; % increase scale of binary jump positions
+pos2 = pos;
 
 flyers = [];
 for indx = 2:(numel(pos2)-1)
     stepDown = pos2(indx) - pos2(indx-1);
     stepUp = pos2(indx+1) - pos2(indx);
     if stepDown & stepUp < 800
-        flyers = [flyers (pos2(indx)-CR25.start)];
+        flyers = [flyers, (pos2(indx) - start)];
     end
 end
 
@@ -60,8 +62,8 @@ Loads = [200 150 50 250 100];
 conditions = zeros(); %defines pressure, angle, and loading conditions for later graphing
 
 for i = 1:25
-    datax = CR25.SA(CR25.r7.pos(i):15:CR25.r7.pos(i+1));
-    datay = -CR25.FY(CR25.r7.pos(i):15:CR25.r7.pos(i+1));
+    datax = SA(pos(i):15:pos(i+1));
+    datay = -FY(pos(i):15:pos(i+1));
     conditions(i,1) = Pressures(1);  %stating current pressure
     conditions(i,2) = Cambers(int32(idivide(int32(i-1),int32(5),'floor'))+1);
     conditions(i,3) = Loads(mod(i-1,5)+1);
@@ -99,23 +101,23 @@ legend('B','C','D','E')
 figure('Name', 'C R25B 7in Rim')
 subplot(2, 1, 1)
 hold all
-plot(CR25.P(CR25.start:CR25.end), 'r')
-plot(CR25.IA(CR25.start:CR25.end), 'b')
-plot(CR25.SA(CR25.start:CR25.end), 'g')
-%plot(CR25r7.jumps(CR25r7.start:CR25r7.end), 'k')
+plot(P(start:stop), 'r')
+plot(IA(start:stop), 'b')
+plot(SA(start:stop), 'g')
+%plot(jumps(start:stop), 'k')
 title('Pressure [kPa], Camber [deg], Slip Angle [deg]')
 legend('Pressure', 'Camber', 'Slip Angle') %, 'Jumps')
 
-color2 = -300 > CR25.FZ;
-color2 = CR25.FZ.*color2;
+color2 = -300 > FZ;
+color2 = FZ.*color2;
 
 subplot(2, 1, 2)
 hold all
-plot(CR25.FZ(CR25.start:CR25.end), 'r')
-plot(CR25.dFZ(CR25.start:CR25.end), 'b')
+plot(FZ(start:stop), 'r')
+plot(dFZ(start:stop), 'b')
 scatter(flyers,zeros(1,numel(flyers)),'og')
-%scatter([pos2(93)-CR25r7.start+1, pos2(119)-CR25r7.start+1], [CR25r7.dFZ(pos2(93)), CR25r7.dFZ(pos2(119))], 10, 'g')
-%scatter(0:CR25r7.end - CR25r7.start, color2(CR25r7.start:CR25r7.end), 1, 'k')
+%scatter([pos2(93)-start+1, pos2(119)-start+1], [dFZ(pos2(93)), dFZ(pos2(119))], 10, 'g')
+%scatter(0:stop - start, color2(start:stop), 1, 'k')
 title('Normal Load [N]')
 %legend('Normal Load', 'd Normal Load')
 
