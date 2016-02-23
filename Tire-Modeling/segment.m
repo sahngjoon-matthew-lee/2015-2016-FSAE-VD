@@ -38,7 +38,9 @@ shiftPos(1) = pos(1);
 dPos = shiftPos - pos;
 
 % find transitions where derivative strays from normal value
-jumps = abs(dPos) < 30  
+jumps = abs(dPos) < 30 
+
+%hieos fsdonfsd
 
 
 
