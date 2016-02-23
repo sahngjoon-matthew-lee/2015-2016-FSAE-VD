@@ -12,6 +12,7 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
+CR25 = segment(CR25);
 
 ET = CR25.ET; % [s] elapsed time
 P = CR25.P;   % [kpa] pressue
@@ -22,33 +23,14 @@ FY = CR25.FY; % [N] lateral force
 FZ = CR25.FZ; % [N] normal force
 MX = CR25.MX; % [N*m] overturning moment
 MZ = CR25.MZ; % [N*m] aligning torque
-
-% Defined start and end of the useful data
-start = 8450; % start of useful 7in rim data (8450)
-stop = 120200; % end of useful 7in rim data  (117200)
-
-% Break data into segments
-shiftFZ = circshift(FZ, 1); % shift normal force array
-shiftFZ(1) = FZ(1);
-dFZ = shiftFZ - FZ; % find derivative of normal force
-
-jumps = abs(dFZ) > 125; % jump positions in binary
-dFZ = jumps.*dFZ; % jump position values
-pos = find(jumps > 0); % positions where jumps occur
-
-temp2 = pos >= start; % remove positions that come before useful data
-trimPos = pos(temp2); % useful positions where jumps occur
-temp3 = trimPos <= stop; % remove positions that come after useful data
-pos = trimPos(temp3); % useful positions where jumps occur
-jumps = jumps*15; % increase scale of binary jump positions
-pos2 = pos;
+pos = CR25.segs;
 
 flyers = [];
-for indx = 2:(numel(pos2)-1)
-    stepDown = pos2(indx) - pos2(indx-1);
-    stepUp = pos2(indx+1) - pos2(indx);
+for indx = 2:(numel(pos)-1)
+    stepDown = pos(indx) - pos(indx-1);
+    stepUp = pos(indx+1) - pos(indx);
     if stepDown & stepUp < 800
-        flyers = [flyers, (pos2(indx) - start)];
+        flyers = [flyers, (pos(indx) - start)];
     end
 end
 
