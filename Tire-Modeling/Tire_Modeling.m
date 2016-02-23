@@ -12,7 +12,7 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
-CR25 = segment(CR25);
+CR25 = segment(CR25, 8450, 117280, 125, 800);
 
 ET = CR25.ET; % [s] elapsed time
 P = CR25.P;   % [kpa] pressue
@@ -25,14 +25,6 @@ MX = CR25.MX; % [N*m] overturning moment
 MZ = CR25.MZ; % [N*m] aligning torque
 pos = CR25.segs;
 
-flyers = [];
-for indx = 2:(numel(pos)-1)
-    stepDown = pos(indx) - pos(indx-1);
-    stepUp = pos(indx+1) - pos(indx);
-    if stepDown & stepUp < 800
-        flyers = [flyers, (pos(indx) - start)];
-    end
-end
 
 %% Pacejka Fit
 coEff = [];
@@ -52,8 +44,6 @@ for i = 1:25
     coEff = cat(1, coEff, Pacejka(datax, datay));
 end
 
-disp(coEff)
-disp(conditions)
 
 
 %% Plotting coefficient changes
@@ -74,35 +64,6 @@ scatter(conditions([1:5:21],3),coEff(1,[1:5:21]),'or')
 % scatter(conditions([1:end],3),coEff(1,[1:end]),'ok')
 legend('B','C','D','E')
 %}
-
-
-
-
-
-%% C R25B 7in Rim Data
-figure('Name', 'C R25B 7in Rim')
-subplot(2, 1, 1)
-hold all
-plot(P(start:stop), 'r')
-plot(IA(start:stop), 'b')
-plot(SA(start:stop), 'g')
-%plot(jumps(start:stop), 'k')
-title('Pressure [kPa], Camber [deg], Slip Angle [deg]')
-legend('Pressure', 'Camber', 'Slip Angle') %, 'Jumps')
-
-color2 = -300 > FZ;
-color2 = FZ.*color2;
-
-subplot(2, 1, 2)
-hold all
-plot(FZ(start:stop), 'r')
-plot(dFZ(start:stop), 'b')
-scatter(flyers,zeros(1,numel(flyers)),'og')
-%scatter([pos2(93)-start+1, pos2(119)-start+1], [dFZ(pos2(93)), dFZ(pos2(119))], 10, 'g')
-%scatter(0:stop - start, color2(start:stop), 1, 'k')
-title('Normal Load [N]')
-%legend('Normal Load', 'd Normal Load')
-
 
 
 
