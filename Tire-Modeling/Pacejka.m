@@ -47,11 +47,10 @@ coEff = lsqcurvefit(y, x0, input, output, lb, ub, opt);
 
 y = @(x) coEff(3)*sin(coEff(2)*atan(coEff(1)*x - coEff(4)*(coEff(1)*x - atan(coEff(1)*x))));
 
-%{
-figure()
-hold on
-scatter(input, output, 3, 'b')
-fplot(y, [degtorad(-15) degtorad(15)], 'r')
-%}
+% figure()
+% hold on
+% scatter(input, output, 3, 'ob')
+% fplot(y, [degtorad(-15) degtorad(15)], 'r')
+
 
 end
