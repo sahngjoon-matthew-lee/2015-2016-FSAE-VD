@@ -12,6 +12,7 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
+CR25 = segment(CR25, 8450, 117280, 125, 800);
 
 ET = CR25.ET; % [s] elapsed time
 P = CR25.P;   % [kpa] pressue
@@ -22,35 +23,8 @@ FY = CR25.FY; % [N] lateral force
 FZ = CR25.FZ; % [N] normal force
 MX = CR25.MX; % [N*m] overturning moment
 MZ = CR25.MZ; % [N*m] aligning torque
+pos = CR25.segs;
 
-% Defined start and end of the useful data
-start = 8450; % start of useful 7in rim data (8450)
-stop = 120200; % end of useful 7in rim data  (117200)
-
-% Break data into segments
-shiftFZ = circshift(FZ, 1); % shift normal force array
-shiftFZ(1) = FZ(1);
-dFZ = shiftFZ - FZ; % find derivative of normal force
-
-jumps = abs(dFZ) > 125; % jump positions in binary
-dFZ = jumps.*dFZ; % jump position values
-pos = find(jumps > 0); % positions where jumps occur
-
-temp2 = pos >= start; % remove positions that come before useful data
-trimPos = pos(temp2); % useful positions where jumps occur
-temp3 = trimPos <= stop; % remove positions that come after useful data
-pos = trimPos(temp3); % useful positions where jumps occur
-jumps = jumps*15; % increase scale of binary jump positions
-pos2 = pos;
-
-flyers = [];
-for indx = 2:(numel(pos2)-1)
-    stepDown = pos2(indx) - pos2(indx-1);
-    stepUp = pos2(indx+1) - pos2(indx);
-    if stepDown & stepUp < 800
-        flyers = [flyers, (pos2(indx) - start)];
-    end
-end
 
 %% Pacejka Fit
 coEff = [];
@@ -69,9 +43,6 @@ for i = 1:25
     conditions(i,3) = Loads(mod(i-1,5)+1);
     coEff = cat(1, coEff, Pacejka(datax, datay));
 end
-
-disp(coEff)
-disp(conditions)
 
 
 %% Plotting coefficient changes
@@ -92,36 +63,6 @@ scatter(conditions([1:5:21],3),coEff(1,[1:5:21]),'or')
 % scatter(conditions([1:end],3),coEff(1,[1:end]),'ok')
 legend('B','C','D','E')
 %}
-
-
-
-
-
-%% C R25B 7in Rim Data
-figure('Name', 'C R25B 7in Rim')
-subplot(2, 1, 1)
-hold all
-plot(P(start:stop), 'r')
-plot(IA(start:stop), 'b')
-plot(SA(start:stop), 'g')
-%plot(jumps(start:stop), 'k')
-title('Pressure [kPa], Camber [deg], Slip Angle [deg]')
-legend('Pressure', 'Camber', 'Slip Angle') %, 'Jumps')
-
-color2 = -300 > FZ;
-color2 = FZ.*color2;
-
-subplot(2, 1, 2)
-hold all
-plot(FZ(start:stop), 'r')
-plot(dFZ(start:stop), 'b')
-scatter(flyers,zeros(1,numel(flyers)),'og')
-%scatter([pos2(93)-start+1, pos2(119)-start+1], [dFZ(pos2(93)), dFZ(pos2(119))], 10, 'g')
-%scatter(0:stop - start, color2(start:stop), 1, 'k')
-title('Normal Load [N]')
-%legend('Normal Load', 'd Normal Load')
-
-
 
 
 end
