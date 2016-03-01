@@ -45,7 +45,6 @@ for i = 1:25
 end
 
 
-
 %% Plotting coefficient changes
 %{
 figure('name','Camber Change')
@@ -64,7 +63,6 @@ scatter(conditions([1:5:21],3),coEff(1,[1:5:21]),'or')
 % scatter(conditions([1:end],3),coEff(1,[1:end]),'ok')
 legend('B','C','D','E')
 %}
-
 
 
 end
