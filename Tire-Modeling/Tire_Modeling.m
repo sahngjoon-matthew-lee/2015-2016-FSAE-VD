@@ -7,6 +7,7 @@ format long
 
 %% R25B Non-Driven Behavior
 % R25B data
+<<<<<<< HEAD
 CR25_7.r20 = load('Round 5 SI/B1464run20.mat'); % -
 CR25_7.r21 = load('Round 5 SI/B1464run21.mat'); % -
 
@@ -39,6 +40,26 @@ for indx = 2:(numel(pos2)-1)
         flyers = [flyers (pos2(indx)-CR25r7.start)];
     end
 end
+=======
+r20 = load('Round-5-SI/B1464run20.mat'); % loading round 20 data
+r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
+
+CR25 = combine(r20, r21); % -
+CR25 = timeSplice(CR25, r20, r21);
+CR25 = segment(CR25, 8450, 117280, 125, 800);
+
+ET = CR25.ET; % [s] elapsed time
+P = CR25.P;   % [kpa] pressue
+SA = CR25.SA; % [deg] slip angle
+IA = CR25.IA; % [deg] camber angle
+FX = CR25.FX; % [N] longitudinal force
+FY = CR25.FY; % [N] lateral force
+FZ = CR25.FZ; % [N] normal force
+MX = CR25.MX; % [N*m] overturning moment
+MZ = CR25.MZ; % [N*m] aligning torque
+pos = CR25.segs;
+
+>>>>>>> 4c598070106a5de7e55ef0a3c6105f92d2c2eb85
 
 %% Pacejka Fit
 coEff = [];
@@ -59,6 +80,7 @@ for i = 1:25
     coEff = cat(1, coEff, Pacejka(datax, datay));
 end
 
+<<<<<<< HEAD
 conditions
 
 conditions([1:5:21],[1:end])
@@ -129,5 +151,27 @@ plot(conditions([5*n-4:5*n],3),coEff([5*n-4:5*n],4),'ok')
 legend('B','C','D','E')
 
 end
+=======
+
+%% Plotting coefficient changes
+%{
+figure('name','Camber Change')
+hold all
+scatter(conditions([1:5:21],2),coEff(1,21]),'or')
+% scatter(conditions([1:end],2),coEff(1,[1:end]),'og')
+% scatter(conditions([1:end],2),coEff(1,[1:end]),'ob')
+% scatter(conditions([1:end],2),coEff(1,[1:end]),'ok')
+legend('B','C','D','E')
+
+figure('name','Load Change')
+hold all
+scatter(conditions([1:5:21],3),coEff(1,[1:5:21]),'or')
+% scatter(conditions([1:end],3),coEff(1,[1:end]),'og')
+% scatter(conditions([1:end],3),coEff(1,[1:end]),'ob')
+% scatter(conditions([1:end],3),coEff(1,[1:end]),'ok')
+legend('B','C','D','E')
+%}
+
+>>>>>>> 4c598070106a5de7e55ef0a3c6105f92d2c2eb85
 
 end
