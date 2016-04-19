@@ -1,4 +1,4 @@
-function n = segment(input, start, stop, threshold1, threshold2)
+function n = segment(input, start, stop, gate1, gate2, gate3)
 %{ 
 find the transitions in normal force FZ and lists the points where transitions 
 occur in a struct field called segs
@@ -22,7 +22,7 @@ shiftFZ(1) = FZ(1); % eliminate first point which was last index
 dFZ = shiftFZ - FZ; % subtract previous points from following points
 
 % find transitions where derivative exceeds threshold
-jumps = abs(dFZ) > threshold1; % transition positions in binary
+jumps = abs(dFZ) > gate1; % transition positions in binary
 dFZ = jumps.*dFZ; % derivative at transition positions
 pos = find(abs(dFZ) > 0); % positions where transitions occur
 
@@ -38,9 +38,9 @@ shiftPos(1) = pos(1);
 dPos = shiftPos - pos;
 
 % find transitions where derivative strays from normal value
-jumps = abs(dPos) < 30 
+jumps = abs(dPos) < gate2 & abs(dPos) > gate3;
+%pos = pos(jumps);
 
-%hieos fsdonfsd
 
 
 
@@ -48,7 +48,7 @@ flyers = [];
 for i = 2:(numel(pos)-1)
     stepDown = pos(i) - pos(i-1);
     stepUp = pos(i+1) - pos(i);
-    if stepDown & stepUp < threshold2
+    if stepDown & stepUp < gate2
         flyers = [flyers, (pos(i) - start)];
     end
 end
@@ -91,7 +91,7 @@ subplot(2, 1, 2)
 hold all
 plot(start:stop, FZ(start:stop), 'r')
 scatter(pos, FZ(pos), 'b')
-scatter(flyers,zeros(1,numel(flyers)),'og')
+scatter(flyers+start,FZ(flyers+start),'og')
 title('Normal Load [N]')
 legend('Normal Load', 'Location', 'eastoutside')
 axis([0 length(FZ) -inf inf])

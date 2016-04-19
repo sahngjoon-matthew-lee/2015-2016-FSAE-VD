@@ -12,7 +12,7 @@ r21 = load('Round-5-SI/B1464run21.mat'); % loading round 21 data
 
 CR25 = combine(r20, r21); % -
 CR25 = timeSplice(CR25, r20, r21);
-CR25 = segment(CR25, 8450, 117280, 125, 800);
+CR25 = segment(CR25, 8450, 117280, 125, 600, 1100);
 
 ET = CR25.ET; % [s] elapsed time
 P = CR25.P;   % [kpa] pressue
